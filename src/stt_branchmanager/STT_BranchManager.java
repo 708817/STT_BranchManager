@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -19,26 +20,18 @@ import javafx.stage.Stage;
  */
 public class STT_BranchManager extends Application {
     
+    Stage window;
+    
     @Override
     public void start(Stage primaryStage) {
-        Button btn = new Button();
-        btn.setText("Say 'Hello World'");
-        btn.setOnAction(new EventHandler<ActionEvent>() {
-            
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Hello World!");
-            }
-        });
+        window = primaryStage;
+//        window.getIcons().add(new Image("File:IMAGE.jpg"));   // FOR ICONS
         
-        StackPane root = new StackPane();
-        root.getChildren().add(btn);
-        
-        Scene scene = new Scene(root, 300, 250);
-        
-        primaryStage.setTitle("Hello World!");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        // Set Scene
+        AdminLogin scenes = new AdminLogin();
+        window.setTitle("WHATS THE NAME OF THIS COMPANY?");
+        window.setScene(scenes.loginMethod(window));
+        window.show();
     }
 
     /**
