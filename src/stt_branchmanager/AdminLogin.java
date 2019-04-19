@@ -56,6 +56,7 @@ public class AdminLogin extends STT_BranchManager {
             
             if (login == true) {
                 MainDashboard mdb = new MainDashboard();
+                mdb.adminBranch = admin.adminBranch;
                 window.setScene(mdb.mainMethod(window));
             } else {
 //                Popup.display("Error Logging In", "Log-in Failed. Try again.");
@@ -70,7 +71,7 @@ public class AdminLogin extends STT_BranchManager {
         StackPane loginLayout = new StackPane();
         loginLayout.getChildren().add(loginVBox);
 
-        loginScene = new Scene(loginLayout, 320, 150);
+        loginScene = new Scene(loginLayout, 560, 640);
         return loginScene;
     }
     
