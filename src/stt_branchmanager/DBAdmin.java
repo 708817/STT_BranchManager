@@ -21,6 +21,7 @@ class DBAdmin {
     // PLACEHOLDERS
     String phAdmin = "", phPass = "";
     int phBranch = 0;
+    String phEmail = "";
 
     public boolean DBAdmin(String username, String password) {
         System.out.println("DBAdmin.java -> DBAdmin");
@@ -37,15 +38,16 @@ class DBAdmin {
         // insert db method start
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test?autoReconnect=true&useSSL=false", "root", "12345");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/java3_project_stt?autoReconnect=true&useSSL=false", "root", "12345");
             
             Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * from manager_account WHERE Admin_ID=" + username + " AND Authentication=\"" + password + "\"");
+            ResultSet rs = st.executeQuery("SELECT * from manager_account WHERE admin_id=" + username + " AND authentication=\"" + password + "\"");
 
             while (rs.next()) {
-                phAdmin = Integer.toString(rs.getInt("Admin_ID"));
-                phPass = rs.getString("Authentication");
-                phBranch = rs.getInt("Branch_ID");
+                phAdmin = Integer.toString(rs.getInt("admin_id"));
+                phPass = rs.getString("authentication");
+                phBranch = rs.getInt("branch_id");
+                phEmail = rs.getString("email");
             }
             
             rs.close();
@@ -66,5 +68,9 @@ class DBAdmin {
         }
         
         return checker;
+    }
+    
+    public String getAdminInfo() {
+        return "GetMed Branch " + phBranch + " | <" + phEmail + ">";
     }
 }

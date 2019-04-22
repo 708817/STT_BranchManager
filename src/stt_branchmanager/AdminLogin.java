@@ -57,9 +57,10 @@ public class AdminLogin extends STT_BranchManager {
             if (login == true) {
                 MainDashboard mdb = new MainDashboard();
                 mdb.adminBranch = admin.adminBranch;
+                window.setTitle(admin.getAdminInfo());
                 window.setScene(mdb.mainMethod(window));
             } else {
-//                Popup.display("Error Logging In", "Log-in Failed. Try again.");
+                MessagePopup.display("Log-in Failed", "Incorrect User ID and/or Password. Please try again.");
             }
         });
 
@@ -71,7 +72,7 @@ public class AdminLogin extends STT_BranchManager {
         StackPane loginLayout = new StackPane();
         loginLayout.getChildren().add(loginVBox);
 
-        loginScene = new Scene(loginLayout, 560, 640);
+        loginScene = new Scene(loginLayout, 440, 640);
         return loginScene;
     }
     

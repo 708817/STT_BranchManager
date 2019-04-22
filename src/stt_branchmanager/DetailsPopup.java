@@ -26,7 +26,7 @@ import javafx.stage.Stage;
  * @author Dido
  */
 public class DetailsPopup {
-    public static void display(int order_id, double totalPrice, List<String> customerDetails, List<String[]> displayDetails) {
+    public static void display(int order_id, double totalPrice, List<String> customerDetails, List<String[]> displayDetails, int prescribed) {
         
         // GridPane Border: http://www.java2s.com/Tutorials/Java/JavaFX_How_to/GridPane/Set_a_CSS_for_the_GridPane.htm
         // Set Font as Bold: t.setFont(Font.font("Verdana", FontWeight.BOLD, 70));
@@ -37,7 +37,6 @@ public class DetailsPopup {
         window.initModality(Modality.APPLICATION_MODAL);
         window.setTitle("Order Details");
         
-        Label content;
         String [] saTemp;
         
 //        Label content = new Label();
@@ -76,7 +75,11 @@ public class DetailsPopup {
         gpOrderDetails.setHgap(10);
         gpOrderDetails.setAlignment(Pos.CENTER);
         
-        Label lblTotalPrice = new Label("Total: " + Double.toString(totalPrice + (double)60)); // Total Price of Items
+        if (prescribed != 0) {
+            totalPrice += (double)60;
+        }
+        
+        Label lblTotalPrice = new Label("Total: " + Double.toString((double)Math.round(totalPrice * 100000d) / 100000d)); // Total Price of Items
         lblTotalPrice.setAlignment(Pos.BOTTOM_RIGHT);
         
         Button okBtn = new Button("Close");

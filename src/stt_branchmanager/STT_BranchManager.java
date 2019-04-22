@@ -29,7 +29,7 @@ public class STT_BranchManager extends Application {
         
         // Set Scene
         AdminLogin scenes = new AdminLogin();
-        window.setTitle("WHATS THE NAME OF THIS COMPANY?");
+        window.setTitle("GetMed");
         window.setScene(scenes.loginMethod(window));
         window.show();
     }

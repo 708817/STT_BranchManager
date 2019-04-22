@@ -11,17 +11,28 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 /**
@@ -33,6 +44,8 @@ public class MainDashboard {
     Scene mainScene;
     int adminBranch;
     
+    Thread th, th2;
+    
     // MySQL database variables
     private Connection con; // REF 1
     private Statement st; // REF 2
@@ -40,40 +53,90 @@ public class MainDashboard {
     
     VBox vbb; // REF 3 Eto pangdisplay lang sa buong List ng gpList
     VBox vbb2;
+    VBox vbMain;
+    TabPane tpThreads;
+    Tab tab1;
+    Tab tab2;
     List<GridPane> gpList; // REF 4 Eto lalagyan or lagayan ng mga GridPane. Each GridPane contains the Information Details mentioned above.
     List<GridPane> gpList2;
     Button btnAccept;
     Button btnDecline;
     Button btnSetAsDelivered;
     Button btnDetails;
+    Button btnLogout;
+    Label lblHeader;
+    GridPane gpTest;
+    HBox bs;
     
     public Scene mainMethod(Stage window) {
         System.out.println("MainDashboard.java -> mainMethod");
         
+        showConfirmedOrders();
+        showNewOrders();
         // Default GUI display declarations START
-        vbb = new VBox(); // REF 3
+        vbb = new VBox(20); // REF 3
+        vbb.setPadding(new Insets(30,20,10,20));
         vbb2 = new VBox(); 
-
-        StackPane root = new StackPane();
-        root.getChildren().add(vbb);
-
-        mainScene = new Scene(root, 560, 640);
-        // Default GUI display declarations END
+        tpThreads = new TabPane();
+        tpThreads.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
         
+        tab1 = new Tab("New Orders");
+        tab1.setContent(vbb);
+        tpThreads.getTabs().add(tab1);
+        
+        tab2 = new Tab("Confirmed Orders");
+        tab2.setContent(vbb2);
+        tpThreads.getTabs().add(tab2);
+        
+        lblHeader = new Label("GETMED");
+        lblHeader.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+        btnLogout = new Button("Logout");
+        btnLogout.setOnAction(e -> {
+            try {
+                rs.close();
+                con.close();
+                th.stop();
+                th2.stop();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            AdminLogin scenes = new AdminLogin();
+            window.setTitle("GetMed");
+            window.setScene(scenes.loginMethod(window));
+            window.show();
+        });
+        
+        bs = new HBox();
+        bs.getChildren().add(btnLogout);
+        bs.setAlignment(Pos.CENTER_RIGHT);
+        
+        vbMain = new VBox(10);
+        
+        gpTest = new GridPane();
+        gpTest.add(lblHeader, 0, 0);
+        
+        gpTest.add(bs, 1, 0);
+
+        GridPane.setHgrow(bs, Priority.ALWAYS);
+        
+        tpThreads.tabMinWidthProperty().bind(vbMain.widthProperty().divide(tpThreads.getTabs().size()).subtract(20));
+
+        mainScene = new Scene(vbMain, 440, 640);
+        // Default GUI display declarations END
+
         // Creating Connectivity to database
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver"); 
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test?autoReconnect=true&useSSL=false", "root", "12345"); // REF 1
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/java3_project_stt?autoReconnect=true&useSSL=false", "root", "12345"); // REF 1
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
-        showNewOrders();
-//        showConfirmedOrders();
+
         return mainScene;
     }
     
     private void showNewOrders() {
+//        th.sto
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() {
@@ -86,12 +149,13 @@ public class MainDashboard {
                             
                             // For every instance, i-clear yung laman ng Vbox 
                             vbb.getChildren().clear();
+                            vbMain.getChildren().clear();
                             // Declaration of new GridPane List
                             gpList = new ArrayList<>(); // REF 4
                             
                             try {
                                 // REF 2 
-                                selectSQLStatement("SELECT * FROM orders WHERE Order_Status=\"Pending\" AND Branch_ID=" + adminBranch);
+                                selectSQLStatement("SELECT * FROM orders WHERE status=\"Pending\" AND branch_id=" + adminBranch);
                                 System.out.println(adminBranch);
                                 while (rs.next()) {
                                     
@@ -101,30 +165,50 @@ public class MainDashboard {
                                     // NOTE: dapat yung pangalan sa loob ng rs.getString(); may parehas doon
                                     // sa MySQL Database.
                                     
-                                    int dbOrder_ID = rs.getInt("Order_ID"),
-                                            dbAccount_ID = rs.getInt("Account_ID"),
-                                            dbBranch_ID = rs.getInt("Branch_ID");
-                                    String dbOrder_Status = rs.getString("Order_Status"),
-                                            dbOrder_Items = rs.getString("Order_Items");
+                                    int dbOrder_ID = rs.getInt("orders_id"),
+                                            dbAccount_ID = rs.getInt("account_id"),
+                                            dbBranch_ID = rs.getInt("branch_id"),
+                                            dbPrescribed = rs.getInt("prescribed");
+                                    String dbOrder_Status = rs.getString("status"),
+                                            dbOrder_Items = rs.getString("order_items");
+                                    String strPrescribed = "";
                                     
-                                    Label detailsRow1 = new Label (dbOrder_ID + ", " + dbAccount_ID + ", " + dbOrder_Status);
-                                    Label detailsRow2 = new Label (dbOrder_Items);
+                                    if (dbPrescribed != 0) {
+                                        strPrescribed = ", Prescription Needed";
+                                    }
+                                    
+                                    Label detailsRow1 = new Label ("Order #" + dbOrder_ID);
+                                    detailsRow1.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+                                    
+                                    Label detailsRow2 = new Label (dbOrder_Status + strPrescribed);
                                     
                                     // Dito finoformat yung layout ng information detail ng isang customer.
                                     // Gamit ko GridPane since akala ko eto yung pinakamadaling i-format.
+                                    VBox vbLeft = new VBox(5);
+                                    vbLeft.getChildren().add(detailsRow1);
+                                    vbLeft.getChildren().add(detailsRow2);
+                                    
+                                    HBox hbRight = new HBox(10);
+                                    hbRight.getChildren().add(btnAccept = new Button("Accept"));
+                                    hbRight.getChildren().add(btnDecline = new Button("Decline"));
+                                    hbRight.getChildren().add(btnDetails = new Button("Details"));
+                                    hbRight.setAlignment(Pos.TOP_RIGHT);
+                                    
                                     GridPane tempGP = new GridPane();
-                                    tempGP.add(detailsRow1, 0, 0);
-                                    tempGP.add(detailsRow2, 0, 1);
-                                    tempGP.add(btnDetails = new Button("More Details..."), 0, 2);
-                                    tempGP.add(btnAccept = new Button("Accept"), 2, 0);
-                                    tempGP.add(btnDecline = new Button("Decline"), 3, 0);
+                                    tempGP.add(vbLeft,0,0);
+                                    tempGP.add(hbRight,1,0);
+                                    tempGP.setHgap(10);
+                                    tempGP.setVgap(5);
+                                    tempGP.prefWidthProperty().bind(vbMain.widthProperty());
+                                    
+                                    GridPane.setHgrow(hbRight, Priority.ALWAYS);
                                     
                                     // Event Handling ng mga interactive GUIs. For every customer, may
                                     // sarili silang event handling, pero same yung methods.
                                     // Interactive GUIs START
                                     btnDetails.setOnAction(e -> {
                                         try {
-                                            displayOrder(dbOrder_Items, dbAccount_ID, dbBranch_ID, dbOrder_ID);
+                                            displayOrder(dbOrder_Items, dbAccount_ID, dbBranch_ID, dbOrder_ID, dbPrescribed);
                                         } catch (SQLException ex) {
                                             ex.printStackTrace();
                                         }
@@ -157,6 +241,8 @@ public class MainDashboard {
                                 
                                 // After placing the format in a GridPane List, display all its contents in the VBox
                                 vbb.getChildren().addAll(gpList);
+                                vbMain.getChildren().add(gpTest);
+                                vbMain.getChildren().add(tpThreads);
                                 // I-clear mo na para sa susunod na instance
                                 gpList.clear();
 
@@ -179,7 +265,7 @@ public class MainDashboard {
         };
         
         // Declaration of thread
-        Thread th = new Thread(task);
+        th = new Thread(task);
         // KAILANGAN ITO PARA KAPAG CINLOSE MO YUNG APP, MAGSASARA RIN YUNG THREAD
         th.setDaemon(true);
         // Start na si thread.
@@ -204,7 +290,7 @@ public class MainDashboard {
                             
                             try {
                                 // REF 2 
-                                selectSQLStatement("SELECT * FROM orders WHERE Order_Status=\"Processing\" AND Branch_ID=" + adminBranch);
+                                selectSQLStatement("SELECT * FROM orders WHERE status=\"Processing\" AND branch_ID=" + adminBranch);
                                 System.out.println(adminBranch);
                                 while (rs.next()) {
                                     
@@ -214,11 +300,12 @@ public class MainDashboard {
                                     // NOTE: dapat yung pangalan sa loob ng rs.getString(); may parehas doon
                                     // sa MySQL Database.
                                     
-                                    int dbOrder_ID = rs.getInt("Order_ID"),
-                                            dbAccount_ID = rs.getInt("Account_ID"),
-                                            dbBranch_ID = rs.getInt("Branch_ID");
-                                    String dbOrder_Status = rs.getString("Order_Status"),
-                                            dbOrder_Items = rs.getString("Order_Items");
+                                    int dbOrder_ID = rs.getInt("orders_id"),
+                                            dbAccount_ID = rs.getInt("account_id"),
+                                            dbBranch_ID = rs.getInt("branch_id"),
+                                            dbPrescribed = rs.getInt("prescribed");
+                                    String dbOrder_Status = rs.getString("status"),
+                                            dbOrder_Items = rs.getString("order_items");
                                     
                                     Label detailsRow1 = new Label (dbOrder_ID + ", " + dbAccount_ID + ", " + dbOrder_Status);
                                     Label detailsRow2 = new Label (dbOrder_Items);
@@ -228,7 +315,7 @@ public class MainDashboard {
                                     GridPane tempGP = new GridPane();
                                     tempGP.add(detailsRow1, 0, 0);
                                     tempGP.add(detailsRow2, 0, 1);
-                                    tempGP.add(btnSetAsDelivered = new Button("Set as Delivered"), 1, 0);
+                                    tempGP.add(btnSetAsDelivered = new Button("Set as Complete"), 1, 0);
                                     
                                     // Event Handling ng mga interactive GUIs. For every customer, may
                                     // sarili silang event handling, pero same yung methods.
@@ -268,11 +355,11 @@ public class MainDashboard {
         };
         
         // Declaration of thread
-        Thread th = new Thread(task);
+        th2 = new Thread(task);
         // KAILANGAN ITO PARA KAPAG CINLOSE MO YUNG APP, MAGSASARA RIN YUNG THREAD
-        th.setDaemon(true);
+        th2.setDaemon(true);
         // Start na si thread.
-        th.start();
+        th2.start();
     }
     
     private void selectSQLStatement(String query) throws SQLException {
@@ -330,22 +417,22 @@ public class MainDashboard {
                 int quantity = 0;
                 double price = 0;
                 
-                selectSQLStatement("SELECT * FROM stock WHERE Item_ID=" + itemID + "AND Branch_ID=" + branch_id);
+                selectSQLStatement("SELECT * FROM stock WHERE item_id=" + itemID + " AND branch_id=" + branch_id);
                 while (rs.next()) {
                     price = rs.getDouble("Price");
                     quantity = rs.getInt("Quantity");
                 }
                 price *= orderQuantity;
                 totalPrice += price;
-                updateSQLStatement("UPDATE stock SET Quantity=" + (quantity - orderQuantity) + " WHERE Item_ID=" + itemID + "AND Branch_ID=" + branch_id);
+                updateSQLStatement("UPDATE stock SET quantity=" + (quantity - orderQuantity) + " WHERE item_id=" + itemID + " AND branch_id=" + branch_id);
             }
         }
-        updateSQLStatement("UPDATE orders SET Order_Status=\"" + newStatus + "\" WHERE Order_ID=" + order_id);
+        updateSQLStatement("UPDATE orders SET status=\"" + newStatus + "\" WHERE orders_ID=" + order_id);
     }
     
     private void finishConfirmedOrder(int order_id, int acnt_id) {
         try {
-            updateSQLStatement("UPDATE orders SET Order_Status=\"Delivered\" WHERE Order_ID=" + order_id);
+            updateSQLStatement("UPDATE orders SET status=\"Delivered\" WHERE orders_id=" + order_id);
             System.out.println("You pressed Set as Delivered for "
                     + acnt_id + ", "
                     + order_id);
@@ -354,13 +441,12 @@ public class MainDashboard {
         }
     }
     
-    private void displayOrder(String order_itm, int accnt_id, int branch_id, int order_id) throws SQLException {
-        int totalPrice = 0;
+    private void displayOrder(String order_itm, int accnt_id, int branch_id, int order_id, int prescribed) throws SQLException {
+        double totalPrice = 0;
         List<String[]> list = new ArrayList<>();
         List<String[]> displayDetails = new ArrayList<>();
         List<String> customerDetails = new ArrayList<>();
         String[] splittedItems = order_itm.split(",");
-        String[] item = new String[4]; // Item Name, Original Price, Order Quantity, Final Price
 
         // Split each items orderd and put each item in one node of the List
         for (String iq : splittedItems) {
@@ -369,36 +455,72 @@ public class MainDashboard {
 
         // Find each item in the Stock database and get its details
         for (String[] count : list) {
+        String[] item = new String[4]; // Item Name, Original Price, Order Quantity, Final Price
             int itemID = Integer.parseInt(count[0]);
             int orderQuantity = Integer.parseInt(count[1]);
             double price = 0;
             double itemPrice = 0;
             String name = "";
 
-            selectSQLStatement("SELECT * FROM stock WHERE Item_ID=" + itemID + " AND Branch_ID=" + branch_id);
+            selectSQLStatement("SELECT * FROM stock WHERE item_id=" + itemID + " AND branch_id=" + branch_id);
             while (rs.next()) {
                 price = rs.getDouble("Price");
                 name = rs.getString("Item_Name");
             }
             itemPrice = price * orderQuantity;
-            totalPrice += price;
-            
+            totalPrice += itemPrice;
+            System.out.println(name + ", " + totalPrice);
             item[0] = name;
             item[1] = Double.toString(price);
             item[2] = Integer.toString(orderQuantity);
             item[3] = Double.toString(itemPrice);
 
             displayDetails.add(item);
+            
         }
-
-        selectSQLStatement("SELECT * FROM customer_account WHERE Account_ID=" + accnt_id);
+        
+        selectSQLStatement("SELECT * FROM customer_account WHERE account_id=" + accnt_id);
         while (rs.next()) {
-            customerDetails.add(rs.getString("Name"));
-            customerDetails.add(rs.getString("Email"));
-            customerDetails.add(rs.getString("ContactNumber"));
-            customerDetails.add(rs.getString("Address"));
+            String first = rs.getString("firstname"),
+                    middle = rs.getString("middlename"),
+                    last = rs.getString("lastname");
+            
+            String name = "";
+            name += first;
+            if (middle != null)
+                name += " " + middle;
+            name += " " + last;
+            
+            customerDetails.add(name);
+            customerDetails.add(rs.getString("contactnumber"));
+            customerDetails.add(rs.getString("email"));
         }
-        DetailsPopup.display(order_id, totalPrice, customerDetails, displayDetails);
+        
+        selectSQLStatement("SELECT * FROM address WHERE account_id=" + accnt_id);
+        while (rs.next()) {
+            String address = "";
+            String floor = "";
+            String building = "";
+            String housenumber = "";
+            
+            if (rs.getString("floor") != null) {
+                floor = rs.getString("floor");
+                address += floor + " Floor, ";
+            }
+            if (rs.getString("building") != null) {
+                building = rs.getString("building");
+                address += "Building " + building + ", ";
+            }
+            if (rs.getString("housenumber") != null) {
+                housenumber = rs.getString("housenumber");
+                address += housenumber + ", ";
+            }
+            address += rs.getString("street") + ", " + 
+                    rs.getString("barangay") + ", " + rs.getString("city");
+            
+            customerDetails.add(address);
+        }
+        DetailsPopup.display(order_id, totalPrice, customerDetails, displayDetails, prescribed);
     }
 
 }
