@@ -8,6 +8,7 @@ package stt_branchmanager;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLSyntaxErrorException;
 import java.sql.Statement;
 
 /**
@@ -26,6 +27,10 @@ class DBAdmin {
     public boolean DBAdmin(String username, String password) {
         System.out.println("DBAdmin.java -> DBAdmin");
 
+        if (username.isEmpty() || password.isEmpty()) {
+            return false;
+        }
+        
         this.username = username;
         this.password = password;
 
@@ -35,6 +40,7 @@ class DBAdmin {
     private boolean loginAdmin() {
         System.out.println("DBAdmin.java -> loginAdmin");
         boolean checker;
+        
         // insert db method start
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -54,9 +60,13 @@ class DBAdmin {
             st.close();
             con.close();
             
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (SQLSyntaxErrorException sqlex) {
+//            sqlex.printStackTrace();
+            return false;
+        } catch (Exception ex)  {
+            ex.printStackTrace(); 
         }
+
         
         // insert db method end
         if (username.equals(phAdmin)

@@ -1,0 +1,220 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.mainFxmlClass {
+
+}
+
+.background {
+    -fx-background-color: WHITE;
+}
+
+.whiteBG {
+    -fx-background-color: WHITE;
+}
+
+.tabPane {
+    -fx-rippler-fill:RED;
+}
+
+.blueButton {
+  -fx-text-fill: #FFFFFF;
+  -fx-background-radius: 22;
+  -fx-background-color: #3AAAED;
+  -fx-font-family: "verdana";
+  -fx-font-weight: bold;
+  -fx-font-size: 12;
+  -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 2, 0, 0.5, 0.5);
+  -fx-padding: 5 10 5 10;
+}
+
+.blueButton:hover {
+  -fx-background-color: linear-gradient(#6AC4FF, #468CCF);
+  -fx-font-weight: bold;
+  -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 2, 0, 0.5, 0.5);
+}
+
+.blueButton2 {
+  -fx-font-family: "verdana";
+  -fx-text-fill: #FFFFFF;
+  -fx-font-size: 11;
+  -fx-padding: 7 14 7 14;
+  -fx-border-radius: 10;
+  -fx-background-color: #2084F7;
+}
+.blueButton2:hover {
+  -fx-background-color: linear-gradient(#2187FC,  #1C72D6);
+}
+
+.greenButton {
+  -fx-font-family: "verdana";
+  -fx-text-fill: #FFFFFF;
+  -fx-font-size: 11;
+  -fx-padding: 7 14 7 14;
+  -fx-border-radius: 10;
+  -fx-background-color: #7CEE18;
+}
+.greenButton:hover {
+  -fx-background-color: linear-gradient(#91E340,  #59DB18);
+}
+
+.redButton {
+  -fx-font-family: "verdana";
+  -fx-text-fill: #FFFFFF;
+  -fx-font-size: 11;
+  -fx-padding: 7 14 7 14;
+  -fx-border-radius: 10;
+  -fx-background-color: #EE3215;
+}
+.redButton:hover {
+  -fx-background-color: linear-gradient(#F23315,  #BF2911);
+}
+
+.whiteButton {
+  -fx-font-family: "verdana";
+  -fx-text-fill: #000000;
+  -fx-font-size: 11;
+  -fx-padding: 7 14 7 14;
+  -fx-border-radius: 10;
+  -fx-background-color: #FFFFFF;
+}
+.whiteButton:hover {
+  -fx-background-color: linear-gradient(#FFFFFF,  #F5F5F5);
+}
+
+.yellowButton {
+  -fx-font-family: "verdana";
+  -fx-text-fill: #424242;
+  -fx-font-size: 11;
+  -fx-padding: 7 14 7 14;
+  -fx-border-radius: 10;
+  -fx-background-color: #F7F01E;
+}
+.yellowButton:hover {
+  -fx-background-color: linear-gradient(#F7F01E,  #E6DF1C);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.tab .tab-label 
+{
+-fx-background-color: transparent;    
+-fx-alignment: CENTER;
+-fx-text-fill: -fx-text-base-color;
+-fx-font-size: 15;
+/*-fx-font-family: 'verdana';*/
+}
+
+/*.tab *.tab-label Text {
+-fx-effect: dropshadow(two-pass-box , rgba(255, 255, 255, 0.4), 1, 0.0 , 0, 1);
+}*/
+/*.tab-content-area 
+{
+-fx-background-color: -fx-control-inner-background;
+-fx-padding: 0.0em;  
+ -fx-opacity: -fx-disabled-opacity;
+}*/
+.tab 
+{
+/* This is how it is done in Button, but the -1 inset caused a white line  
+ to appear beneath the tab, which looks bad, so it's taken out below.    */
+    -fx-background-color: #27aeff;
+    -fx-text-base-color: white;
+-fx-font-family: "verdana";
+-fx-background-radius: 5 5 0 0, 5 5 0 0, 4 4 0 0, 3 3 0 0;
+/*-fx-background-insets: 0 0 -1 0, 0, 1, 2;*/
+-fx-background-insets: -20, -20;
+/*-fx-background-radius: 5 5 0 0, 4 4 0 0, 3 3 0 0;*/
+/*-fx-padding: 0.083333em 0.5em 0.083333em 0.5em;*/
+}
+/*.tab:top 
+{
+-fx-background-color: -fx-tab-border-color, -fx-inner-border, -fx-body-color;
+}
+.tab:right 
+{
+-fx-background-color: -fx-tab-border-color, -fx-inner-border-bottomup, -fx-body-color-bottomup;
+}
+.tab:bottom 
+{
+-fx-background-color: -fx-tab-border-color, -fx-inner-border-bottomup, -fx-body-color-bottomup;
+}
+.tab:left 
+{
+-fx-background-color: -fx-tab-border-color, -fx-inner-border, -fx-body-color;
+}
+*/.tab:hover 
+{
+-fx-color: -fx-hover-base;
+}
+.tab:selected 
+{
+    /*-fx-background-color: white;*/
+    -fx-background-color: transparent, -fx-inner-border, #f4f4f4;
+-fx-background-radius: 5 5 0 0, 4 4 0 0, 3 3 0 0;
+    -fx-text-base-color: black;
+/*-fx-background-insets: 0, 1 1 0 1, 2 2 0 2;
+-fx-background-color: -fx-tab-border-color, -fx-control-inner-background;
+-fx-background-insets: 0, 1 1 0 1;
+-fx-background-radius: 5 5 0 0, 4 4 0 0;*/
+}
+.tab:disabled 
+{
+-fx-opacity: -fx-disabled-opacity;
+}
+.tab:disabled:hover 
+{
+-fx-color: -fx-base;
+-fx-opacity: -fx-disabled-opacity;
+}
+.tab-pane *.tab-header-background 
+{
+-fx-background-color: -fx-outer-border, WHITE;
+/*-fx-effect: innershadow(two-pass-box , rgba(0,0,0,0.6) , 4, 0.0 , 0 , 0);*/
+}
+/*.tab-pane *.tab-header-area {*/
+/* I would like to use -fx-tab-border-color here, but for some reason it */
+/* just isn't the correct color, even though it works in :top above */
+/*    -fx-background-color: -fx-tab-border-color, lightgray;*/
+/*}*/
+/*.tab-pane:top *.tab-header-area 
+{
+-fx-background-insets: 0, 0 0 1 0;
+-fx-padding: 0.416667em 0.166667em 0.0em 0.833em;  5 2 0 10 
+}
+.tab-pane:bottom *.tab-header-area 
+{
+-fx-background-insets: 0, 1 0 0 0;
+-fx-padding: 0 0.166667em 0.416667em 0.833em;  0 2 5 0 
+}
+.tab-pane:left *.tab-header-area 
+{
+-fx-background-insets: 0, 0 1 0 0;
+-fx-padding: 0.833em 0.0em 0.166667em 0.416667em;  10 0 2 5 
+}
+.tab-pane:right *.tab-header-area 
+{
+-fx-background-insets: 0, 0 0 0 1;
+-fx-padding: 0.833em 0.416667em 0.166667em 0.0em;  10 5 2 0 
+}
+.tab-pane .headers-region 
+{
+-fx-effect: dropshadow(two-pass-box , rgba(0,0,0,0.6) , 4, 0.0 , 0, 0);
+}*/
+
+
+/*#loginBtn Text {
+}*/

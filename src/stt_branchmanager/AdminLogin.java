@@ -12,6 +12,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -30,7 +33,10 @@ public class AdminLogin extends STT_BranchManager {
         
         System.out.println("AdminLogin.java -> loginMethod");
         
-        Label lblUser = new Label("Admin Name");
+        Image imgLogo = new Image("File:res/img/getmedlogo2.png");
+        ImageView ivLogo = new ImageView(imgLogo);
+        
+        Label lblUser = new Label("Admin ID");
         TextField userTextField = new TextField();
 
         Label passLabel = new Label("Password");
@@ -45,7 +51,7 @@ public class AdminLogin extends STT_BranchManager {
         loginGridPane.setHgap(10);
         loginGridPane.setVgap(5);
 
-        Button loginBtn = new Button("Login");
+        Button loginBtn = new Button("LOG-IN");
         loginBtn.setOnAction(e -> {
             DBAdmin admin = new DBAdmin();
             try {
@@ -63,16 +69,23 @@ public class AdminLogin extends STT_BranchManager {
                 MessagePopup.display("Log-in Failed", "Incorrect User ID and/or Password. Please try again.");
             }
         });
+        loginBtn.getStyleClass().add("blueButton2");
 
         VBox loginVBox = new VBox(10);
-        loginVBox.getChildren().addAll(loginGridPane, loginBtn);
-        loginVBox.setPadding(new Insets(10, 10, 10, 10));
-        loginVBox.setAlignment(Pos.CENTER);
-
+        loginVBox.getChildren().addAll(ivLogo, loginGridPane, loginBtn);
+        loginVBox.setPadding(new Insets(150, 10, 10, 10));
+        loginVBox.setAlignment(Pos.TOP_CENTER);
+//        loginVBox.getStyleClass().add("background");
+        
+        Image imgBG = new Image("File:res/img/loginbg3.jpg");
+        ImageView ivBG = new ImageView(imgBG);
+        
         StackPane loginLayout = new StackPane();
+        loginLayout.getChildren().add(ivBG);
         loginLayout.getChildren().add(loginVBox);
 
-        loginScene = new Scene(loginLayout, 440, 640);
+        loginScene = new Scene(loginLayout, 490, 560);
+        loginScene.getStylesheets().add("css/css_demo.css");
         return loginScene;
     }
     

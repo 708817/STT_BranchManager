@@ -25,7 +25,7 @@ public class STT_BranchManager extends Application {
     @Override
     public void start(Stage primaryStage) {
         window = primaryStage;
-//        window.getIcons().add(new Image("File:IMAGE.jpg"));   // FOR ICONS
+        window.getIcons().add(new Image("File:res/img/icon2.png", 50, 50, false, false));   // FOR ICONS
         
         // Set Scene
         AdminLogin scenes = new AdminLogin();

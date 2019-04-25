@@ -26,6 +26,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -66,10 +68,21 @@ public class MainDashboard {
     Button btnLogout;
     Label lblHeader;
     GridPane gpTest;
-    HBox bs;
-    
+    HBox hbb;
+    Label lblBranch;
+    VBox vbb3;
+    StackPane spHeader;
+
     public Scene mainMethod(Stage window) {
         System.out.println("MainDashboard.java -> mainMethod");
+        
+        // Creating Connectivity to database
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/java3_project_stt?autoReconnect=true&useSSL=false", "root", "12345"); // REF 1
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         
         showConfirmedOrders();
         showNewOrders();
@@ -77,6 +90,8 @@ public class MainDashboard {
         vbb = new VBox(20); // REF 3
         vbb.setPadding(new Insets(30,20,10,20));
         vbb2 = new VBox(); 
+        vbb2.setPadding(new Insets(30,20,10,20));
+        
         tpThreads = new TabPane();
         tpThreads.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
         
@@ -84,13 +99,40 @@ public class MainDashboard {
         tab1.setContent(vbb);
         tpThreads.getTabs().add(tab1);
         
-        tab2 = new Tab("Confirmed Orders");
+        tab2 = new Tab("Show Confirmed Orders");
         tab2.setContent(vbb2);
         tpThreads.getTabs().add(tab2);
         
-        lblHeader = new Label("GETMED");
-        lblHeader.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
-        btnLogout = new Button("Logout");
+        tab1.setOnSelectionChanged(e -> {
+            tab1.setText("New Orders");
+            tab2.setText("Show Confirmed Orders");
+        });
+        
+        tab2.setOnSelectionChanged(e -> {
+            tab1.setText("Show New Orders");
+            tab2.setText("Confirmed Orders");
+        });
+        
+        Image imgHeader = new Image("File:res/img/name2.png");
+        ImageView ivHeader = new ImageView(imgHeader);
+        
+        try {
+            selectSQLStatement("SELECT * FROM branch where branch_id=" + adminBranch);
+            while (rs.next()) {
+                lblBranch = new Label(rs.getString("branch_city") + " Branch");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        lblBranch.setFont(Font.font("Segoe UI", FontWeight.MEDIUM, 13));
+
+        
+        vbb3 = new VBox(5);
+        vbb3.getChildren().add(ivHeader);
+        vbb3.getChildren().add(lblBranch);
+        vbb3.setAlignment(Pos.CENTER);
+        
+        btnLogout = new Button("LOG-OUT");
         btnLogout.setOnAction(e -> {
             try {
                 rs.close();
@@ -105,38 +147,38 @@ public class MainDashboard {
             window.setScene(scenes.loginMethod(window));
             window.show();
         });
+        btnLogout.getStyleClass().add("blueButton2");
         
-        bs = new HBox();
-        bs.getChildren().add(btnLogout);
-        bs.setAlignment(Pos.CENTER_RIGHT);
+        hbb = new HBox();
+        hbb.getChildren().add(btnLogout);
+        hbb.setAlignment(Pos.BOTTOM_RIGHT);
         
-        vbMain = new VBox(10);
+        vbMain = new VBox();
         
-        gpTest = new GridPane();
-        gpTest.add(lblHeader, 0, 0);
-        
-        gpTest.add(bs, 1, 0);
+//        gpTest = new GridPane();
+//        gpTest.add(vbb3, 0, 0);
+//        gpTest.add(hbb, 1, 0);
+//        gpTest.setPadding(new Insets(10,10,10,10));
+//        gpTest.getStyleClass().add("background");
 
-        GridPane.setHgrow(bs, Priority.ALWAYS);
+        spHeader = new StackPane();
+        spHeader.getChildren().addAll(vbb3, hbb);
+        spHeader.setPadding(new Insets(10,10,10,10));
+        spHeader.getStyleClass().add("background");
+
+        GridPane.setHgrow(hbb, Priority.ALWAYS);
         
         tpThreads.tabMinWidthProperty().bind(vbMain.widthProperty().divide(tpThreads.getTabs().size()).subtract(20));
 
-        mainScene = new Scene(vbMain, 440, 640);
+        mainScene = new Scene(vbMain, 490, 560);
         // Default GUI display declarations END
 
-        // Creating Connectivity to database
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/java3_project_stt?autoReconnect=true&useSSL=false", "root", "12345"); // REF 1
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        mainScene.getStylesheets().add("css/css_demo.css");
+        
         return mainScene;
     }
     
     private void showNewOrders() {
-//        th.sto
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() {
@@ -189,9 +231,9 @@ public class MainDashboard {
                                     vbLeft.getChildren().add(detailsRow2);
                                     
                                     HBox hbRight = new HBox(10);
-                                    hbRight.getChildren().add(btnAccept = new Button("Accept"));
-                                    hbRight.getChildren().add(btnDecline = new Button("Decline"));
-                                    hbRight.getChildren().add(btnDetails = new Button("Details"));
+                                    hbRight.getChildren().add(btnAccept = new Button("CONFIRM"));
+                                    hbRight.getChildren().add(btnDecline = new Button("CANCEL"));
+                                    hbRight.getChildren().add(btnDetails = new Button("DETAILS"));
                                     hbRight.setAlignment(Pos.TOP_RIGHT);
                                     
                                     GridPane tempGP = new GridPane();
@@ -214,6 +256,7 @@ public class MainDashboard {
                                         }
                                         run();
                                     });
+                                    btnDetails.getStyleClass().add("whiteButton");
                                     
                                     btnAccept.setOnAction(e -> {
                                         try {
@@ -223,6 +266,7 @@ public class MainDashboard {
                                         }
                                         run();
                                     });
+                                    btnAccept.getStyleClass().add("greenButton");
 
                                     btnDecline.setOnAction(e -> {
                                         try {
@@ -232,6 +276,7 @@ public class MainDashboard {
                                         }
                                         run();
                                     });
+                                    btnDecline.getStyleClass().add("redButton");
                                     
                                     // Interactive GUIs END
                                     
@@ -241,7 +286,8 @@ public class MainDashboard {
                                 
                                 // After placing the format in a GridPane List, display all its contents in the VBox
                                 vbb.getChildren().addAll(gpList);
-                                vbMain.getChildren().add(gpTest);
+//                                vbMain.getChildren().add(gpTest);
+                                vbMain.getChildren().add(spHeader);
                                 vbMain.getChildren().add(tpThreads);
                                 // I-clear mo na para sa susunod na instance
                                 gpList.clear();
@@ -306,16 +352,36 @@ public class MainDashboard {
                                             dbPrescribed = rs.getInt("prescribed");
                                     String dbOrder_Status = rs.getString("status"),
                                             dbOrder_Items = rs.getString("order_items");
+                                    String strPrescribed = "";
                                     
-                                    Label detailsRow1 = new Label (dbOrder_ID + ", " + dbAccount_ID + ", " + dbOrder_Status);
-                                    Label detailsRow2 = new Label (dbOrder_Items);
+                                    if (dbPrescribed != 0) {
+                                        strPrescribed = ", Prescription Needed";
+                                    }
+                                    
+                                    Label detailsRow1 = new Label ("Order #" + dbOrder_ID);
+                                    detailsRow1.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+                                    
+                                    Label detailsRow2 = new Label (dbOrder_Status + strPrescribed);
+                                    
+                                    VBox vbLeft = new VBox(5);
+                                    vbLeft.getChildren().add(detailsRow1);
+                                    vbLeft.getChildren().add(detailsRow2);
+                                    
+                                    HBox hbRight = new HBox(10);
+                                    hbRight.getChildren().add(btnSetAsDelivered = new Button("SET AS COMPLETE"));
+                                    hbRight.getChildren().add(btnDetails = new Button("DETAILS"));
+                                    hbRight.setAlignment(Pos.TOP_RIGHT);
                                     
                                     // Dito finoformat yung layout ng information detail ng isang customer.
                                     // Gamit ko GridPane since akala ko eto yung pinakamadaling i-format.
                                     GridPane tempGP = new GridPane();
-                                    tempGP.add(detailsRow1, 0, 0);
-                                    tempGP.add(detailsRow2, 0, 1);
-                                    tempGP.add(btnSetAsDelivered = new Button("Set as Complete"), 1, 0);
+                                    tempGP.add(vbLeft, 0, 0);
+                                    tempGP.add(hbRight, 1, 0);
+                                    tempGP.setHgap(10);
+                                    tempGP.setVgap(5);
+                                    tempGP.prefWidthProperty().bind(vbMain.widthProperty());
+                                     
+                                    GridPane.setHgrow(hbRight, Priority.ALWAYS);
                                     
                                     // Event Handling ng mga interactive GUIs. For every customer, may
                                     // sarili silang event handling, pero same yung methods.
@@ -324,6 +390,17 @@ public class MainDashboard {
                                         finishConfirmedOrder(dbOrder_ID, dbAccount_ID);
                                         run();
                                     });
+                                    btnSetAsDelivered.getStyleClass().add("yellowButton");
+                                    
+                                    btnDetails.setOnAction(e -> {
+                                        try {
+                                            displayOrder(dbOrder_Items, dbAccount_ID, dbBranch_ID, dbOrder_ID, dbPrescribed);
+                                        } catch (SQLException ex) {
+                                            ex.printStackTrace();
+                                        }
+                                        run();
+                                    });
+                                    btnDetails.getStyleClass().add("whiteButton");
 
                                     // Interactive GUIs END
                                     
@@ -452,10 +529,18 @@ public class MainDashboard {
         for (String iq : splittedItems) {
             list.add(iq.split("@"));
         }
+        
+        // Add this for headings
+        String[] heading = new String[4];
+        heading[0] = "Item Name";
+        heading[1] = "Initial Price";
+        heading[2] = "Qty.";
+        heading[3] = "Price";
+        displayDetails.add(heading);
 
         // Find each item in the Stock database and get its details
         for (String[] count : list) {
-        String[] item = new String[4]; // Item Name, Original Price, Order Quantity, Final Price
+            String[] item = new String[4]; // Item Name, Original Price, Order Quantity, Final Price
             int itemID = Integer.parseInt(count[0]);
             int orderQuantity = Integer.parseInt(count[1]);
             double price = 0;
@@ -473,7 +558,7 @@ public class MainDashboard {
             item[0] = name;
             item[1] = Double.toString(price);
             item[2] = Integer.toString(orderQuantity);
-            item[3] = Double.toString(itemPrice);
+            item[3] = Double.toString((double)Math.round(itemPrice * 100000d) / 100000d);
 
             displayDetails.add(item);
             
