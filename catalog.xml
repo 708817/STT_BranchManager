@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="http://192.168.137.132:8080/getmed/getmed?wsdl" uri="xml-resources/web-service-references/getmed/wsdl/192.168.137.132_8080/getmed/getmed.wsdl"/>
+    <system systemId="http://192.168.137.132:8080/getmed/getmed?xsd=1" uri="xml-resources/web-service-references/getmed/wsdl/192.168.137.132_8080/getmed/getmed.xsd_1.xsd"/>
+    <system systemId="http://localhost:8080/STT_WebService/STT_WebService?wsdl" uri="xml-resources/web-service-references/STT_WebService/wsdl/localhost_8080/STT_WebService/STT_WebService.wsdl"/>
+    <system systemId="http://localhost:8080/STT_WebService/STT_WebService?xsd=1" uri="xml-resources/web-service-references/STT_WebService/wsdl/localhost_8080/STT_WebService/STT_WebService.xsd_1.xsd"/>
+    <system systemId="http://localhost:8080/STT_WebService/STT_WebService?xsd=2" uri="xml-resources/web-service-references/STT_WebService/wsdl/localhost_8080/STT_WebService/STT_WebService.xsd_2.xsd"/>
+    <system systemId="http://localhost:8080/getmed/getmed_test?wsdl" uri="xml-resources/web-service-references/getmed_test/wsdl/localhost_8080/getmed/getmed_test.wsdl"/>
+    <system systemId="http://localhost:8080/getmed/getmed_test?xsd=1" uri="xml-resources/web-service-references/getmed_test/wsdl/localhost_8080/getmed/getmed_test.xsd_1.xsd"/>
+</catalog>

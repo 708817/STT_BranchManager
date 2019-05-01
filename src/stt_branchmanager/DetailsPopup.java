@@ -134,6 +134,7 @@ public class DetailsPopup {
         okBtn.setOnAction(e -> {
             window.close();
         });
+        okBtn.getStyleClass().add("blueButton2");
         
         HBox hbOK = new HBox();
         hbOK.getChildren().add(okBtn);
@@ -148,7 +149,9 @@ public class DetailsPopup {
         vbox.setPadding(new Insets(15,15,15,15));
         
         Scene mainScene = new Scene(vbox);
+        mainScene.getStylesheets().add("css/css_demo.css");
         window.setScene(mainScene);
         window.showAndWait();
     }
+    
 }

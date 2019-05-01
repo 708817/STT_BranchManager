@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI (http://jax-ws.java.net). RI's version is Metro/2.3.2-b608 (trunk-7979; 2015-01-21T12:50:19+0000) JAXWS-RI/2.2.11-b150120.1832 JAXWS-API/2.2.12 JAXB-RI/2.2.12-b141219.1637 JAXB-API/2.2.13-b141020.1521 svn-revision#unknown. --><xs:schema xmlns:tns="http://stt/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://stt/">
+
+<xs:element name="EncryptPass" type="tns:EncryptPass"/>
+
+<xs:element name="EncryptPassResponse" type="tns:EncryptPassResponse"/>
+
+<xs:element name="change_details" type="tns:change_details"/>
+
+<xs:element name="change_detailsResponse" type="tns:change_detailsResponse"/>
+
+<xs:element name="change_password" type="tns:change_password"/>
+
+<xs:element name="change_passwordResponse" type="tns:change_passwordResponse"/>
+
+<xs:element name="current_details" type="tns:current_details"/>
+
+<xs:element name="current_detailsResponse" type="tns:current_detailsResponse"/>
+
+<xs:element name="customer_account" type="tns:customer_account"/>
+
+<xs:element name="customer_accountResponse" type="tns:customer_accountResponse"/>
+
+<xs:element name="login" type="tns:login"/>
+
+<xs:element name="loginAdmin" type="tns:loginAdmin"/>
+
+<xs:element name="loginAdminResponse" type="tns:loginAdminResponse"/>
+
+<xs:element name="loginResponse" type="tns:loginResponse"/>
+
+<xs:element name="order" type="tns:order"/>
+
+<xs:element name="orderResponse" type="tns:orderResponse"/>
+
+<xs:element name="order_status" type="tns:order_status"/>
+
+<xs:element name="order_statusResponse" type="tns:order_statusResponse"/>
+
+<xs:complexType name="customer_account">
+<xs:sequence>
+<xs:element name="firstname" type="xs:string" minOccurs="0"/>
+<xs:element name="middlename" type="xs:string" minOccurs="0"/>
+<xs:element name="lastname" type="xs:string" minOccurs="0"/>
+<xs:element name="floor" type="xs:string" minOccurs="0"/>
+<xs:element name="building" type="xs:string" minOccurs="0"/>
+<xs:element name="housenumber" type="xs:string" minOccurs="0"/>
+<xs:element name="street" type="xs:string" minOccurs="0"/>
+<xs:element name="barangay" type="xs:string" minOccurs="0"/>
+<xs:element name="city" type="xs:string" minOccurs="0"/>
+<xs:element name="birthdate" type="xs:string" minOccurs="0"/>
+<xs:element name="contactnumber" type="xs:string" minOccurs="0"/>
+<xs:element name="email" type="xs:string" minOccurs="0"/>
+<xs:element name="password" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="customer_accountResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="order_status">
+<xs:sequence>
+<xs:element name="account_id" type="xs:string" minOccurs="0"/>
+<xs:element name="status" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="order_statusResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="loginAdmin">
+<xs:sequence>
+<xs:element name="user" type="xs:string" minOccurs="0"/>
+<xs:element name="pass" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="loginAdminResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="change_password">
+<xs:sequence>
+<xs:element name="email" type="xs:string" minOccurs="0"/>
+<xs:element name="oldpassword" type="xs:string" minOccurs="0"/>
+<xs:element name="newpassword" type="xs:string" minOccurs="0"/>
+<xs:element name="confirmpassword" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="change_passwordResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="current_details">
+<xs:sequence>
+<xs:element name="account_id" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="current_detailsResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="login">
+<xs:sequence>
+<xs:element name="email" type="xs:string" minOccurs="0"/>
+<xs:element name="password" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="loginResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="order">
+<xs:sequence>
+<xs:element name="account_id" type="xs:string" minOccurs="0"/>
+<xs:element name="order_items" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="orderResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:int"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="EncryptPass">
+<xs:sequence>
+<xs:element name="arg0" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="EncryptPassResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="change_details">
+<xs:sequence>
+<xs:element name="account_id" type="xs:string" minOccurs="0"/>
+<xs:element name="firstname" type="xs:string" minOccurs="0"/>
+<xs:element name="middlename" type="xs:string" minOccurs="0"/>
+<xs:element name="lastname" type="xs:string" minOccurs="0"/>
+<xs:element name="floor" type="xs:string" minOccurs="0"/>
+<xs:element name="building" type="xs:string" minOccurs="0"/>
+<xs:element name="housenumber" type="xs:string" minOccurs="0"/>
+<xs:element name="street" type="xs:string" minOccurs="0"/>
+<xs:element name="barangay" type="xs:string" minOccurs="0"/>
+<xs:element name="city" type="xs:string" minOccurs="0"/>
+<xs:element name="birthdate" type="xs:string" minOccurs="0"/>
+<xs:element name="contactnumber" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="change_detailsResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>

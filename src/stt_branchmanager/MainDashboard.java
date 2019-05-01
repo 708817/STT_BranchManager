@@ -183,6 +183,14 @@ public class MainDashboard {
             @Override
             protected Void call() {
                 while (true) {
+                    
+                    // Stop Refreshing every Ten Seconds. Bumabagal PC kapag tuloy-tuloy siya.
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                    
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -197,6 +205,8 @@ public class MainDashboard {
                             
                             try {
                                 // REF 2 
+                                // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+                                // getNewOrders START
                                 selectSQLStatement("SELECT * FROM orders WHERE status=\"Pending\" AND branch_id=" + adminBranch);
                                 System.out.println(adminBranch);
                                 while (rs.next()) {
@@ -299,12 +309,6 @@ public class MainDashboard {
                             }
                         }
                     });
-                    // Stop Refreshing every Ten Seconds. Bumabagal PC kapag tuloy-tuloy siya.
-                    try {
-                        Thread.sleep(10000);
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                    }
 
                 }
             }
@@ -323,6 +327,13 @@ public class MainDashboard {
             @Override
             protected Void call() {
                 while (true) {
+                    // Stop Refreshing every Ten Seconds. Bumabagal PC kapag tuloy-tuloy siya.
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                    
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -420,12 +431,6 @@ public class MainDashboard {
                             }
                         }
                     });
-                    // Stop Refreshing every Ten Seconds. Bumabagal PC kapag tuloy-tuloy siya.
-                    try {
-                        Thread.sleep(10000);
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                    }
 
                 }
             }

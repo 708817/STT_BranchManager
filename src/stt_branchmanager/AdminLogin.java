@@ -5,6 +5,12 @@
  */
 package stt_branchmanager;
 
+import java.security.MessageDigest;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLSyntaxErrorException;
+import java.sql.Statement;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -24,11 +30,14 @@ import javafx.stage.Stage;
  *
  * @author Dido
  */
-public class AdminLogin extends STT_BranchManager {
+public class AdminLogin extends MainDashboard {
     
     private boolean login;
     private Scene loginScene;
-     
+    public int phBranch = 0;
+    public String phEmail = "";
+    int adminBranch = 0;
+
     public Scene loginMethod(Stage window) {
         
         System.out.println("AdminLogin.java -> loginMethod");
@@ -53,20 +62,66 @@ public class AdminLogin extends STT_BranchManager {
 
         Button loginBtn = new Button("LOG-IN");
         loginBtn.setOnAction(e -> {
-            DBAdmin admin = new DBAdmin();
+            SQLAdmin admin = new SQLAdmin();
             try {
-                login = admin.DBAdmin(userTextField.getText(), passTextField.getText());
+                login = admin.SQLAdmin(userTextField.getText(), passTextField.getText());
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            
+
             if (login == true) {
+
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/java3_project_stt?autoReconnect=true&useSSL=false", "root", "12345");
+
+                    String encryptPass = "";
+                    String plainPassword = passTextField.getText();
+
+                    MessageDigest mdAlgorithm = MessageDigest.getInstance("MD5");
+                    mdAlgorithm.update(plainPassword.getBytes());
+
+                    byte[] digest = mdAlgorithm.digest();
+                    StringBuffer hexString = new StringBuffer();
+
+                    for (int i = 0; i < digest.length; i++) {
+                        plainPassword = Integer.toHexString(0xFF & digest[i]);
+
+                        if (plainPassword.length() < 2) {
+                            plainPassword = "0" + plainPassword;
+                        }
+                        hexString.append(plainPassword);
+                    }
+                    encryptPass = hexString.toString();
+                    
+                    Statement st = con.createStatement();
+                    ResultSet rs = st.executeQuery("SELECT * from manager_account WHERE admin_id=" + userTextField.getText() + " AND authentication=\"" + encryptPass + "\"");
+
+                    while (rs.next()) {
+                        phBranch = rs.getInt("branch_id");
+                        phEmail = rs.getString("email");
+                    }
+                    
+                    adminBranch = phBranch;
+
+                    rs.close();
+                    st.close();
+                    con.close();
+
+                } catch (SQLSyntaxErrorException sqlex) {
+                    sqlex.printStackTrace();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
                 MainDashboard mdb = new MainDashboard();
-                mdb.adminBranch = admin.adminBranch;
-                window.setTitle(admin.getAdminInfo());
+                mdb.adminBranch = adminBranch;
+                window.setTitle(getAdminInfo());
                 window.setScene(mdb.mainMethod(window));
+                
             } else {
-                MessagePopup.display("Log-in Failed", "Incorrect User ID and/or Password. Please try again.");
+                System.out.print("no");
+                MessagePopup.display("Log-in Failed", "Log-in Failed. Please try again.");
             }
         });
         loginBtn.getStyleClass().add("blueButton2");
@@ -75,7 +130,6 @@ public class AdminLogin extends STT_BranchManager {
         loginVBox.getChildren().addAll(ivLogo, loginGridPane, loginBtn);
         loginVBox.setPadding(new Insets(150, 10, 10, 10));
         loginVBox.setAlignment(Pos.TOP_CENTER);
-//        loginVBox.getStyleClass().add("background");
         
         Image imgBG = new Image("File:res/img/loginbg3.jpg");
         ImageView ivBG = new ImageView(imgBG);
@@ -88,6 +142,13 @@ public class AdminLogin extends STT_BranchManager {
         loginScene.getStylesheets().add("css/css_demo.css");
         return loginScene;
     }
+
+    public String getAdminInfo() {
+        return "GetMed Branch " + phBranch + " | <" + phEmail + ">";
+    }
+    
+    
+    
     
 }
 
